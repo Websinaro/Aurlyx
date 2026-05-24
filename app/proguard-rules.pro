@@ -1,0 +1,13 @@
+-keep class androidx.media3.** { *; }
+-dontwarn androidx.media3.**
+-keep class dagger.hilt.** { *; }
+-keep @dagger.hilt.android.HiltAndroidApp class * { *; }
+-keep @dagger.hilt.android.AndroidEntryPoint class * { *; }
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class *
+-keepclassmembers @androidx.room.Entity class * { *; }
+-keepclassmembers class com.auralyx.domain.model.** { *; }
+-keepclassmembers class com.auralyx.data.local.entity.** { *; }
+-keepattributes Signature,*Annotation*,EnclosingMethod,InnerClasses
+-dontwarn okhttp3.**
+-dontwarn okio.**
