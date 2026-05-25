@@ -155,10 +155,10 @@ private fun QualitySelector(selected: ConvertQuality, onSelect: (ConvertQuality)
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Icon(
                             when (q) {
-                                ConvertQuality.STANDARD -> Icons.Rounded.HdOutlined
-                                ConvertQuality.HIGH     -> Icons.Rounded.FourK
-                                ConvertQuality.ULTRA    -> Icons.Rounded.AutoAwesome
-                            },
+    ConvertQuality.STANDARD -> Icons.Rounded.Hd
+    ConvertQuality.HIGH     -> Icons.Rounded.HighQuality
+    ConvertQuality.ULTRA    -> Icons.Rounded.AutoAwesome
+},
                             null,
                             tint = if (chosen) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(22.dp)
