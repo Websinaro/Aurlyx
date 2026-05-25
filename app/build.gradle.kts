@@ -1,11 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
-
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
-
     kotlin("kapt")
 }
 
@@ -48,6 +45,9 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.21"
     }
     packaging {
         resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }

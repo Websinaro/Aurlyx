@@ -1,56 +1,153 @@
-# Auralyx Optimization & Feature Summary
+# Auralyx v2.1 — Full Premium Redesign + AD17 Converter
 
-## Build & Dependencies
-- `compileSdk` / `targetSdk` bumped to **36** (Android 16)
-- Kotlin `2.0.21`, AGP `8.7.3`, KSP `2.0.21-1.0.28`
-- Compose BOM `2025.01.01` (Material 3 stable)
-- Media3 `1.5.1` (latest stable)
-- Coil 3 (`coil3-compose`, `coil3-network-okhttp`) — faster image pipeline
-- `androidx.core:core-splashscreen` for faster cold-start
-- `isShrinkResources = true` in release builds
-- `gradle.properties`: parallel builds, incremental Kotlin
+## What Changed (All Modified Files)
 
-## Android 16 / Edge-to-Edge
-- `enableEdgeToEdge()` replaces deprecated `WindowCompat.setDecorFitsSystemWindows`
-- `android:enableOnBackInvokedCallback="true"` for predictive back gesture
-- Removed stale `INTERNET` permission (not needed for local playback)
+### app/build.gradle.kts
+- `compileSdk`/`targetSdk` → 36 (Android 16)
+- Compose BOM `2025.01.01`, Material3 stable
+- Media3 `1.5.1`, Coil 3, core-splashscreen
+- `material-icons-extended` for full icon set
+- `isShrinkResources`, `isMinifyEnabled` for release
 
-## New Features
-| Feature | Where |
-|---------|-------|
-| **Favorites** | Heart icon in player toolbar; stored in Room |
-| **Most Played** | Home screen carousel (sorted by `play_count`) |
-| **Play count** | Auto-incremented on every `updateLastPlayed` call |
-| **Sleep Timer** | Moon icon in player toolbar → dialog (15/30/45/60/90 min) |
-| **Dynamic Color** | Settings toggle (Android 12+ only) |
-| **Improved search** | Relevance-sorted (prefix match first, then play_count) |
+### AndroidManifest.xml
+- Splash screen theme applied
+- `android:enableOnBackInvokedCallback=true` (predictive back)
+- `WRITE_EXTERNAL_STORAGE` for converter output (≤API29)
+- `stopWithTask="false"` on service (ColorOS keep-alive)
 
-## Database (v1 → v2)
-- `MediaEntity` gains: `play_count INT`, `is_favorite BOOLEAN`
-- New indices: `is_favorite`, `play_count`
-- `fallbackToDestructiveMigration()` handles the schema bump safely
-- `updateLastPlayed` now also increments `play_count` atomically
+---
 
-## Performance
-- Column indices cached before cursor loop in `scanAudio()` — faster scan
-- Minimum track duration raised 5s → 10s (avoids ringtone noise)
-- LazyColumn `key = { it.id }` preserved everywhere for stable recomposition
-- `derivedStateOf` for art alpha scroll calculation (avoids recomposition storm)
+## Brand New UI (Full Redesign)
 
-## ColorOS / Background Playback
-- `START_STICKY` on `onStartCommand`
-- `stopWithTask="false"` in manifest
-- Notification channel importance stays `IMPORTANCE_LOW`
+### ui/theme/Color.kt
+- Deep Violet900 background palette
+- Vivid Indigo primary, Rose secondary, Cyan tertiary
+- Full transparent-alpha token set (White06 → White100)
+- Matching light-mode palette
 
-## Code Quality
-- All one-liner minified files reformatted to readable style
-- Dead `INTERNET` permission removed
-- `PreferencesManager` gains `dynamicColor` key
-- `PlayerState` gains `sleepTimerEndsAt` / `sleepTimerActive`
+### ui/theme/Theme.kt
+- Complete Material 3 token mapping for both dark/light
+- Optional dynamic color (Android 12+)
+
+### ui/theme/Type.kt
+- Premium type scale — Black/ExtraBold display, tighter letter-spacing
+
+### ui/components/MediaCard.kt (full rewrite)
+- `MediaCard` — shadow + spring-scale press, gradient scrim, Indigo play button
+- `MediaListItem` — press-highlight background animation, AD17 inline badge
+- `AD17Badge` — compact chip
+- `AlbumArt` — Indigo↔Rose gradient placeholder
+- `AD17ThumbnailImage` — cached bitmap loader
+- `PlayingBars` — animated equalizer, configurable colour
+- `ShimmerBox` — moving linear-gradient skeleton
+- `PermissionScreen` — welcome full-screen with animated icon
+
+### ui/components/GradientBackground.kt
+- Subtle radial glow from background; no heavy gradient
+
+### ui/components/SectionHeader.kt
+- Larger title style, tighter padding
+
+### ui/navigation/NavDestination.kt
+- Added `Routes.CONVERTER`
+
+### ui/navigation/AuralyxNavGraph.kt (full rewrite)
+- Scale+fade default transitions (96 % → 100 %)
+- Player: slide-up-from-half vertical transition
+- Settings/Converter: slide-in-from-right
+- Bottom nav with per-icon AnimatedContent swap
+- NavigationBar tonal styling with Indigo indicator
+
+### ui/home/HomeScreen.kt (full rewrite)
+- Scroll-reactive translucent header
+- `NowPlayingHeroCard` — blurred art background with live progress indicator
+- `ShuffleBanner` — animated gradient gradient sweep
+- Favorites, Recently Played, Most Played, Music Videos carousels
+- Loading skeleton with ShimmerBox
+- Pulse-animated empty state
+
+### ui/player/MiniPlayerBar.kt (full rewrite)
+- Rounded top sheet, gradient progress strip
+- Indigo→Rose gradient play button with spring scale
+- AnimatedContent play/pause icon swap
+
+### ui/player/PlayerScreen.kt (full rewrite)
+- Audio layout: blurred art backdrop, scroll-collapsible
+- Album art spring-scale with isPlaying, glow layer behind art card
+- Scroll-reactive artwork parallax alpha
+- Custom gradient Slider (no track override needed)
+- Sleep timer dialog with 5 presets + cancel
+- Favourite / Sleep / Video toggle in top bar
+- Animated queue reveal with up-next count
+- Video layout: glass icon buttons, double-tap seek ±10s, fullscreen toggle
+
+### ui/library/LibraryScreen.kt (full rewrite)
+- `displaySmall` Black header
+- Animated tab content with direction-aware slide
+- Album grid with song-count chip, tap-ready
+- Artists with circle art avatars
+- Folders with Indigo icon boxes
+
+### ui/search/SearchScreen.kt (full rewrite)
+- Filled TextField with rounded pill shape, no underline
+- AnimatedContent for blank/empty/results states
+- Pulsing search icon empty state
+
+### ui/settings/SettingsScreen.kt (full rewrite)
+- Sectioned list with icon boxes
+- "Convert Video to aD17" action row → ConverterScreen
+- Dynamic Color toggle (API 31+)
+- Version / format info rows
+
+---
+
+## New: Video to AD17 Converter
+
+### converter/AD17Converter.kt (NEW)
+- Full MediaCodec pipeline: video H.264 + audio AAC re-encode
+- `DefaultLoadControl` tuned buffer for gapless smoothness
+- Adjustable quality: Standard (720p/192k), High (1080p/256k), Ultra (1440p/320k)
+- XOR-obfuscation with shared `AD17_KEY` (symmetric with ThumbnailUtils)
+- Coroutine-based, cancellable, progress callbacks
+
+### ui/converter/ConverterViewModel.kt (NEW)
+- `ConversionJob` queue with QUEUED/CONVERTING/DONE/FAILED/CANCELLED states
+- Background-safe via `viewModelScope`
+- Retry-failed, cancel, remove queue operations
+
+### ui/converter/ConverterScreen.kt (NEW)
+- Quality preset picker (icon + bitrate label)
+- System file picker (`video/*`)
+- Per-job cards with animated spinning progress, status icons, linear bar
+- Empty state with pulsing icon
+- Info banner explaining the format
+
+### di/ConverterModule.kt (NEW)
+- Hilt singleton provision of AD17Converter
+
+---
+
+## Audio Engine Improvements
+
+### di/PlayerModule.kt
+- `DefaultLoadControl` — minBuffer 15s, maxBuffer 60s, fast 1.5s play start
+- `setHandleAudioBecomingNoisy(true)` — auto-pause on headphone unplug
+- `skipSilenceEnabled = false` — preserve full dynamic range
+- Audio focus handling enabled
+
+### utils/ThumbnailUtils.kt
+- XOR key shared with `AD17Converter.AD17_KEY` (symmetric encode/decode)
+- Decodes .aD17 → temp .mp4 before frame extraction or playback
+
+---
 
 ## Build Instructions
-```
+```bash
+# Debug
 ./gradlew assembleDebug
-./gradlew assembleRelease   # needs keystore config
+
+# Release (needs keystore configured in build.gradle.kts)
+./gradlew assembleRelease
 ```
-Minimum SDK: 24   Target SDK: 36
+
+Min SDK: 24 | Target SDK: 36 | Kotlin: 2.0.21 | Compose BOM: 2025.01.01
