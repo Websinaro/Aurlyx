@@ -1,6 +1,12 @@
 package com.auralyx.ui.player
 
 import android.app.Activity
+import androidx.compose.ui.draw.blur
+import com.auralyx.domain.model.PlayerState
+import com.auralyx.domain.model.MediaItem
+import com.auralyx.domain.model.RepeatMode
+import com.auralyx.ui.theme.Indigo
+import com.auralyx.ui.theme.IndigoGlow
 import android.content.pm.ActivityInfo
 import android.view.WindowManager
 
