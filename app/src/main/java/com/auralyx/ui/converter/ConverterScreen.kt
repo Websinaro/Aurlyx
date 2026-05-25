@@ -1,6 +1,8 @@
 package com.auralyx.ui.converter
 
 import android.net.Uri
+import androidx.compose.material.icons.outlined.HighQuality
+import androidx.compose.material.icons.outlined.Movie
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
