@@ -117,13 +117,13 @@ private fun VideoOverlay(
                 .statusBarsPadding().padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onBack) { Icon(Icons.Rounded.KeyboardArrowDown, null, tint = Color.White) }
+            IconButton(onClick = onBack) { Icon(Icons.Rounded.KeyboardArrowDown, null, tint = Color.White) }
             Column(Modifier.weight(1f).padding(horizontal = 6.dp)) {
                 Text(state.currentItem?.title ?: "", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(state.currentItem?.displayArtist ?: "", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(0.75f), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             IconButton({ vm.toggleVideo() }) { Icon(Icons.Rounded.AudioFile, null, tint = Color.White) }
-            IconButton(onToggleFs) { Icon(if (isFullscreen) Icons.Rounded.FullscreenExit else Icons.Rounded.Fullscreen, null, tint = Color.White) }
+            IconButton(onClick = onToggleFs) { Icon(if (isFullscreen) Icons.Rounded.FullscreenExit else Icons.Rounded.Fullscreen, null, tint = Color.White) }
         }
 
         // Centre transport
@@ -300,7 +300,7 @@ private fun PlayerTopBar(
         Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal = 6.dp, vertical = 6.dp),
         Arrangement.SpaceBetween, Alignment.CenterVertically
     ) {
-        IconButton(onBack) {
+        IconButton(onClick = onBack) {
             Icon(Icons.Rounded.KeyboardArrowDown, "Back", Modifier.size(32.dp))
         }
         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -309,21 +309,21 @@ private fun PlayerTopBar(
         }
         Row {
             val isFav = state.currentItem?.isFavorite == true
-            IconButton(onFavorite) {
+            IconButton(onClick = onFavorite) {
                 Icon(
                     if (isFav) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                     "Fav",
                     tint = if (isFav) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            IconButton(onSleepTimer) {
+            IconButton(onClick = onSleepTimer) {
                 Icon(
                     Icons.Outlined.Bedtime, "Sleep",
                     tint = if (state.sleepTimerActive) Indigo else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             if (state.currentItem?.isAD17 == true) {
-                IconButton(onToggleVideo) {
+                IconButton(onClick = onToggleVideo) {
                     Icon(Icons.Rounded.Videocam, "Video", tint = MaterialTheme.colorScheme.primary)
                 }
             }
