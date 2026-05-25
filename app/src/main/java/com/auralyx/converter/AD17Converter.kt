@@ -13,7 +13,6 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.nio.ByteBuffer
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -115,8 +114,13 @@ class AD17Converter @Inject constructor(
         val fmt = ex2.getTrackFormat(trackIdx)
         val mime = fmt.getString(MediaFormat.KEY_MIME) ?: return
 
-        val w0    = fmt.getInt(MediaFormat.KEY_WIDTH, 1280)
-        val h0    = fmt.getInt(MediaFormat.KEY_HEIGHT, 720)
+        val w0 = if (fmt.containsKey(MediaFormat.KEY_WIDTH))
+    fmt.getInteger(MediaFormat.KEY_WIDTH)
+else 1280
+
+val h0 = if (fmt.containsKey(MediaFormat.KEY_HEIGHT))
+    fmt.getInteger(MediaFormat.KEY_HEIGHT)
+else 720
         val ratio = w0.toFloat() / h0
         val maxDim = quality.scale
         val (outW, outH) = if (w0 > h0) {
@@ -189,8 +193,13 @@ class AD17Converter @Inject constructor(
     ) {
         val ex2 = MediaExtractor().also { it.setDataSource(srcPath); it.selectTrack(trackIdx) }
         val fmt = ex2.getTrackFormat(trackIdx)
-        val sampleRate  = fmt.getInt(MediaFormat.KEY_SAMPLE_RATE, 44100)
-        val channelCount = fmt.getInt(MediaFormat.KEY_CHANNEL_COUNT, 2)
+        val sampleRate = if (fmt.containsKey(MediaFormat.KEY_SAMPLE_RATE))
+    fmt.getInteger(MediaFormat.KEY_SAMPLE_RATE)
+else 44100
+
+val channelCount = if (fmt.containsKey(MediaFormat.KEY_CHANNEL_COUNT))
+    fmt.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
+else 2
         val mime = fmt.getString(MediaFormat.KEY_MIME) ?: "audio/mp4a-latm"
 
         val outFmt = MediaFormat.createAudioFormat("audio/mp4a-latm", sampleRate, channelCount).apply {
