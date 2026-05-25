@@ -273,7 +273,7 @@ private fun VideoOverlay(
                 size = 48.dp,
                 iconSize = 28.dp
             ) {
-                vm.seekTo((state.progress - 10_000).coerceAtLeast(0))
+                vm.seekTo((state.progress - 10_000L).coerceAtLeast(0L))
             }
 
             GlassIconBtn(
@@ -303,7 +303,7 @@ private fun VideoOverlay(
                 size = 48.dp,
                 iconSize = 28.dp
             ) {
-                vm.seekTo((state.progress + 10_000).coerceAtMost(state.duration))
+                vm.seekTo((state.progress + 10_000L).coerceAtMost(state.duration))
             }
         }
 
